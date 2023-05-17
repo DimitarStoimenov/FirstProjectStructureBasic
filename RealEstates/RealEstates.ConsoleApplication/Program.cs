@@ -13,10 +13,11 @@ namespace RealEstates.ConsoleApplication
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
-           var db = new ApplicationDbContext();
+            var db = new ApplicationDbContext();
 
-           db.Database.Migrate();
+            db.Database.Migrate();
 
+           
             while (true)
             {
                 Console.Clear();
@@ -53,8 +54,10 @@ namespace RealEstates.ConsoleApplication
 
         private static void GetMostExpensiveProperty(ApplicationDbContext db)
         {
-           IDistrictsService districtsService = new DistrictsService(db);
-            var districts = districtsService.GetMostExpensiveDistricts(20);
+            Console.Write("Districts count");
+            int count = int.Parse(Console.ReadLine());
+            IDistrictsService districtsService = new DistrictsService(db);
+            var districts = districtsService.GetMostExpensiveDistricts(count);
             foreach (var district in districts)
             {
                 Console.WriteLine($"{district.Name} => {district.PropertiesCount} => {district.AveragePricePeSquareMeter}€/m²");
@@ -81,7 +84,7 @@ namespace RealEstates.ConsoleApplication
 
             foreach (PropertyInfoDto property in properties)
             {
-                Console.WriteLine($"{property.DistinctName};{property.BuildingType};{property.PropertyType} => {property.Price}€ => {property.Size}m²");
+                Console.WriteLine($"{property.DistinctName};{property.BuildingType}; {property.PropertyType} => {property.Price}€ => {property.Size}m²");
             }
         }
     }

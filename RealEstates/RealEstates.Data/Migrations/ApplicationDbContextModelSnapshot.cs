@@ -82,13 +82,13 @@ namespace RealEstates.Data.Migrations
                     b.Property<int>("BuildingTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DistrictId")
+                    b.Property<int?>("DistrictId")
                         .HasColumnType("int");
 
                     b.Property<byte?>("Floor")
                         .HasColumnType("tinyint");
 
-                    b.Property<int>("Price")
+                    b.Property<int?>("Price")
                         .HasColumnType("int");
 
                     b.Property<int>("Size")
@@ -100,10 +100,10 @@ namespace RealEstates.Data.Migrations
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("YardSize")
+                    b.Property<int?>("YardSize")
                         .HasColumnType("int");
 
-                    b.Property<int>("Year")
+                    b.Property<int?>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -179,9 +179,7 @@ namespace RealEstates.Data.Migrations
 
                     b.HasOne("RealEstates.Models.District", "District")
                         .WithMany("Properties")
-                        .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DistrictId");
 
                     b.HasOne("RealEstates.Models.PropertyType", "Type")
                         .WithMany("Properties")
