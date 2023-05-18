@@ -4,6 +4,7 @@ using RealEstates.Data;
 using RealEstates.Models;
 using RealEstates.Services;
 using RealEstates.Services.Models;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace RealEstates.ConsoleApplication
@@ -17,6 +18,7 @@ namespace RealEstates.ConsoleApplication
 
             db.Database.Migrate();
 
+
            
             while (true)
             {
@@ -24,6 +26,8 @@ namespace RealEstates.ConsoleApplication
                 Console.WriteLine("Choose an option");
                 Console.WriteLine("1. Property Search");
                 Console.WriteLine("2. Most expensive districts");
+                Console.WriteLine("3. Most expensive average price per square meter");
+                Console.WriteLine("4. Witch district is with most expensive average price per square meter");
                 Console.WriteLine("0. EXIT");
 
                 bool parsed = int.TryParse(Console.ReadLine(), out int option);
@@ -31,7 +35,7 @@ namespace RealEstates.ConsoleApplication
                 {
                     break;
                 }
-                if (parsed && (option >= 1 && option <= 2))
+                if (parsed && (option >= 1 && option <= 4))
                 {
                     switch (option)
                     {
@@ -40,6 +44,12 @@ namespace RealEstates.ConsoleApplication
                             break;
                             case 2:
                             GetMostExpensiveProperty(db);
+                            break;
+                        case 3:
+                            AveragePricePerQuadratMeter(db);
+                            break;
+                        case 4:
+                            MostExpenciveDistrict(db);
                             break;
 
                         default:
@@ -52,15 +62,31 @@ namespace RealEstates.ConsoleApplication
             }
         }
 
-        private static void GetMostExpensiveProperty(ApplicationDbContext db)
+        private static void MostExpenciveDistrict(ApplicationDbContext db)
         {
-            Console.Write("Districts count");
-            int count = int.Parse(Console.ReadLine());
             IDistrictsService districtsService = new DistrictsService(db);
-            var districts = districtsService.GetMostExpensiveDistricts(count);
+            IEnumerable<DistrictInfoDto> districts = districtsService.GetMostExpensiveDistricts(1);
             foreach (var district in districts)
             {
-                Console.WriteLine($"{district.Name} => {district.PropertiesCount} => {district.AveragePricePeSquareMeter}€/m²");
+                Console.WriteLine(district.Name.Split(", ")[0]);
+            }
+        }
+
+        private static void AveragePricePerQuadratMeter(ApplicationDbContext db)
+        {
+            IPropertiesService propertiesService = new PropertiesService(db);
+            Console.WriteLine($"Average price per square meter is:   { propertiesService.AveragePricePerQuadratMeter():f2} €/m²");
+        }
+
+        private static void GetMostExpensiveProperty(ApplicationDbContext db)
+        {
+            Console.Write("Districts count ");
+            int count = int.Parse(Console.ReadLine());
+            IDistrictsService districtsService = new DistrictsService(db);
+            IEnumerable<DistrictInfoDto> districts = districtsService.GetMostExpensiveDistricts(count);
+            foreach (var district in districts)
+            {
+                Console.WriteLine($"{district.Name} => {district.PropertiesCount} => {district.AveragePricePeSquareMeter:f2} €/m²");
             }
         }
 

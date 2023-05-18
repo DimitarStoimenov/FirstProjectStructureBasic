@@ -19,7 +19,19 @@ namespace RealEstates.Services
 
         public IEnumerable<DistrictInfoDto> GetMostExpensiveDistricts(int count)
         {
-            return new List<DistrictInfoDto>();
+            var districts = db.Districts.Select(x => new DistrictInfoDto
+            {
+                Name = x.Name,
+                PropertiesCount = x.Properties.Count(),
+                AveragePricePeSquareMeter = db.Properties.Where(x => x.Price.HasValue)
+                .Average(x => x.Price / (decimal)x.Size) ?? 0
+            }) .OrderByDescending( x => x.AveragePricePeSquareMeter)
+                .Take(count)
+                .ToList();
+
+            return districts;
         }
+
+      
     }
 }

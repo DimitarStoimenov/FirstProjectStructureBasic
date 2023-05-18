@@ -20,6 +20,8 @@ namespace RealEstates.Services
         {
             this.dbContext = dbContext;
         }
+
+
         public void Add(int size, int yardSize, byte floor, byte totalFloors, string district, int year, string propertyType, string buildingType, int price)
         {
             var property = new Property
@@ -60,6 +62,17 @@ namespace RealEstates.Services
 
             dbContext.Properties.Add(property);
             dbContext.SaveChanges();
+        }
+
+        public decimal AveragePricePerQuadratMeter()
+        {
+            var properties = dbContext.Properties.Where(x => x.Price.HasValue)
+                .Average(x => x.Price / (decimal)x.Size) ?? 0;
+                
+                
+
+                return properties;
+
         }
 
         public IEnumerable<PropertyInfoDto> Search(int minPrice, int maxPrice, int minSize, int maxSize)
