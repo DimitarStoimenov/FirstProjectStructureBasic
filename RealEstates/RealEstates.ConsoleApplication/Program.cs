@@ -27,7 +27,7 @@ namespace RealEstates.ConsoleApplication
                 Console.WriteLine("1. Property Search");
                 Console.WriteLine("2. Most expensive districts");
                 Console.WriteLine("3. Most expensive average price per square meter");
-                Console.WriteLine("4. Witch district is with most expensive average price per square meter");
+                Console.WriteLine("4. Wich district is with most expensive average price per square meter");
                 Console.WriteLine("0. EXIT");
 
                 bool parsed = int.TryParse(Console.ReadLine(), out int option);

@@ -13,6 +13,7 @@ namespace RealEstates.Services
         
 
         IEnumerable<DistrictInfoDto> GetMostExpensiveDistricts(int count);
+        IEnumerable<DistrictInfoDto> MostExpenciveDistrict(int count);
         
     }
 }

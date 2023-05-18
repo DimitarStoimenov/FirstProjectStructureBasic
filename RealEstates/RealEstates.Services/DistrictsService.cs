@@ -32,6 +32,9 @@ namespace RealEstates.Services
             return districts;
         }
 
-      
+        public IEnumerable<DistrictInfoDto> MostExpenciveDistrict(int count)
+        {
+            return GetMostExpensiveDistricts(1);
+        }
     }
 }
