@@ -23,6 +23,14 @@ namespace RealEstates.Services.Profiler
             this.CreateMap<District, DistrictInfoDto>()
                 .ForMember(x => x.AveragePricePeSquareMeter, s => s.MapFrom(t => t.Properties.Where(x => x.Price.HasValue)
                .Average(x => x.Price / (decimal)x.Size) ?? 0));
+
+            this.CreateMap<RealEstates.Models.Property, GetFullDataDto>()
+                .ForMember(x => x.DistinctName, y => y.MapFrom(s => s.District.Name))
+                .ForMember(x => x.BuildingType, y => y.MapFrom(s => s.BuildingType.Name))
+                .ForMember(x => x.PropertyType, y => y.MapFrom(s => s.Type.Name));
+
+            this.CreateMap<Tag, TagInfoDto>();
+               
         }
 
     }

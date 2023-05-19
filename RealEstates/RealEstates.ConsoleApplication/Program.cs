@@ -36,6 +36,7 @@ namespace RealEstates.ConsoleApplication
                 Console.WriteLine("4. Wich district is with most expensive average price per square meter");
                 Console.WriteLine("5. Add tag:");
                 Console.WriteLine("6. Add bulk tags to properties:");
+                Console.WriteLine("7. Get full info about properties:");
                 Console.WriteLine("0. EXIT");
 
                 bool parsed = int.TryParse(Console.ReadLine(), out int option);
@@ -43,7 +44,7 @@ namespace RealEstates.ConsoleApplication
                 {
                     break;
                 }
-                if (parsed && option >= 1 && option <= 6)
+                if (parsed && option >= 1 && option <= 7)
                 {
                     switch (option)
                     {
@@ -65,6 +66,9 @@ namespace RealEstates.ConsoleApplication
                         case 6:
                             BulkTagToProperties(db);
                             break;
+                        case 7:
+                            GetFullDataInfo(db);
+                            break;
 
                         default:
                             break;
@@ -74,6 +78,51 @@ namespace RealEstates.ConsoleApplication
                     Console.ReadKey();
                 }
             }
+        }
+
+        private static void GetFullDataInfo(ApplicationDbContext db)
+        {
+            IPropertiesService propertiesService = new PropertiesService(db);
+            
+            Console.Write("Please, enter the count of properties you want to see:");
+            bool count = int.TryParse(Console.ReadLine(), out int countProperties);
+            int? res = count ? countProperties : null;
+            if (res.HasValue && countProperties > 0)
+            {
+                Console.WriteLine("Your properties information:");
+                Console.WriteLine();
+
+                var properties = propertiesService.GetFullData(countProperties);
+                var counter = 0;
+                foreach (var property in properties)
+                {
+                    counter++;
+                    Console.WriteLine($"{counter}.");
+                    
+                    Console.WriteLine($"* {property.DistinctName}");
+                    Console.WriteLine($"* {property.Size}");
+                    Console.WriteLine($"* {property.Price}");
+                    Console.WriteLine($"* {property.BuildingType}");
+                    Console.WriteLine($"* {property.PropertyType}");
+                    
+                    Console.WriteLine("Tags:");
+                    
+                    foreach (var tag in property.Tags)
+                    {
+                        Console.WriteLine($"*** {tag.Name}");
+                    }
+
+                    Console.WriteLine();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Please, enter a valid count.");
+              
+            }
+            
+
+
         }
 
         private static void BulkTagToProperties(ApplicationDbContext db)

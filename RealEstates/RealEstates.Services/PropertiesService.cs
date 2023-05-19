@@ -1,5 +1,6 @@
 ﻿using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Identity.Client;
 using RealEstates.Data;
 using RealEstates.Models;
 using RealEstates.Services.Models;
@@ -82,11 +83,32 @@ namespace RealEstates.Services
             return dbContext.Properties.Where(x => x.DistrictId == districtId).Average(x => x.Size);
         }
 
+        public IEnumerable<GetFullDataDto> GetFullData(int count)
+        {
+            var properties = dbContext.Properties
+                
+                .ProjectTo<GetFullDataDto>(this.Mapper.ConfigurationProvider)
+                .Take(count)
+                .ToList();
+
+            return properties;
+        }
+
         public IEnumerable<PropertyInfoDto> Search(int minPrice, int maxPrice, int minSize, int maxSize)
         {
             var properties = dbContext.Properties.Where(x => x.Price >= minPrice && x.Price <= maxPrice && x.Size >= minSize && x.Size <= maxSize)
-                
+
                 .ProjectTo<PropertyInfoDto>(this.Mapper.ConfigurationProvider)
+
+                // .Select(x => new PropertyInfoDto
+                // {
+                //     DistinctName = x.District.Name,
+                //     Size = x.Size,
+                //     Price = x.Price ?? 0,
+                //     PropertyType = x.Type.Name,
+                //     BuildingType = x.BuildingType.Name,
+                //
+                // })
                 .ToList();
             return properties;
         }
