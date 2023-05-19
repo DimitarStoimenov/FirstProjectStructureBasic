@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+
 using RealEstates.Data;
 using RealEstates.Models;
 using RealEstates.Services;
@@ -14,12 +16,16 @@ namespace RealEstates.ConsoleApplication
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
+            Console.InputEncoding = Encoding.Unicode;
             var db = new ApplicationDbContext();
 
             db.Database.Migrate();
 
+          
 
-           
+
+
+
             while (true)
             {
                 Console.Clear();
@@ -28,6 +34,8 @@ namespace RealEstates.ConsoleApplication
                 Console.WriteLine("2. Most expensive districts");
                 Console.WriteLine("3. Most expensive average price per square meter");
                 Console.WriteLine("4. Wich district is with most expensive average price per square meter");
+                Console.WriteLine("5. Add tag:");
+                Console.WriteLine("6. Add bulk tags to properties:");
                 Console.WriteLine("0. EXIT");
 
                 bool parsed = int.TryParse(Console.ReadLine(), out int option);
@@ -35,7 +43,7 @@ namespace RealEstates.ConsoleApplication
                 {
                     break;
                 }
-                if (parsed && (option >= 1 && option <= 4))
+                if (parsed && option >= 1 && option <= 6)
                 {
                     switch (option)
                     {
@@ -51,6 +59,12 @@ namespace RealEstates.ConsoleApplication
                         case 4:
                             MostExpenciveDistrict(db);
                             break;
+                        case 5:
+                            AddTag(db);
+                            break;
+                        case 6:
+                            BulkTagToProperties(db);
+                            break;
 
                         default:
                             break;
@@ -60,6 +74,36 @@ namespace RealEstates.ConsoleApplication
                     Console.ReadKey();
                 }
             }
+        }
+
+        private static void BulkTagToProperties(ApplicationDbContext db)
+        {
+            Console.WriteLine("Bulk operation started!");
+
+            IPropertiesService propertiesService = new PropertiesService(db);
+            ITagService tagService = new TagService(db, propertiesService);
+
+            tagService.BulkTagToPropertiesRelation();
+
+            Console.WriteLine("Bulk operation finished!");
+        }
+
+        private static void AddTag(ApplicationDbContext db)
+        {
+           
+            IPropertiesService propertiesService = new PropertiesService(db);
+            ITagService tagService = new TagService(db, propertiesService);
+            Console.WriteLine("Add tag:");
+            string tagName = Console.ReadLine();
+
+            Console.WriteLine("Add importance (optional):");
+            bool isParsed = int.TryParse(Console.ReadLine(), out int importanceParsed);
+            int? importance = isParsed ? importanceParsed : null;
+            
+            tagService.Add(tagName, importance);
+
+            
+
         }
 
         private static void MostExpenciveDistrict(ApplicationDbContext db)
@@ -75,7 +119,7 @@ namespace RealEstates.ConsoleApplication
         private static void AveragePricePerQuadratMeter(ApplicationDbContext db)
         {
             IPropertiesService propertiesService = new PropertiesService(db);
-            Console.WriteLine($"Average price per square meter is:   { propertiesService.AveragePricePerQuadratMeter():f2} €/m²");
+            Console.WriteLine($"Average price per square meter is: {propertiesService.AveragePricePerQuadratMeter():f2} €/m²");
         }
 
         private static void GetMostExpensiveProperty(ApplicationDbContext db)

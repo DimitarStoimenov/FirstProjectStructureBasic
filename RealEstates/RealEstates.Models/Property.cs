@@ -20,7 +20,7 @@ namespace RealEstates.Models
         public byte? Floor { get; set; }
         public byte? TotalFloors { get; set; }
 
-        public int? DistrictId { get; set; }
+        public int DistrictId { get; set; }
         public District District { get; set; }
         public int? Year { get; set; }
         public int TypeId { get; set; }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RealEstates.Data;
 using RealEstates.Models;
 using RealEstates.Services.Models;
@@ -11,7 +12,7 @@ using Property = RealEstates.Models.Property;
 
 namespace RealEstates.Services
 {
-    public class PropertiesService : IPropertiesService
+    public class PropertiesService : BaseServices,  IPropertiesService
 
     {
         private readonly ApplicationDbContext dbContext;
@@ -66,30 +67,26 @@ namespace RealEstates.Services
 
         public decimal AveragePricePerQuadratMeter()
         {
-            var properties = dbContext.Properties.Where(x => x.Price.HasValue)
+            return dbContext.Properties.Where(x => x.Price.HasValue)
                 .Average(x => x.Price / (decimal)x.Size) ?? 0;
-                
-                
+        }
 
-                return properties;
+        public decimal AveragePricePerQuadratMeter(int districtId)
+        {
+            return dbContext.Properties.Where(x => x.Price.HasValue && x.DistrictId == districtId)
+                .Average(x => x.Price / (decimal)x.Size) ?? 0;
+        }
 
+        public double AverageSize(int districtId)
+        {
+            return dbContext.Properties.Where(x => x.DistrictId == districtId).Average(x => x.Size);
         }
 
         public IEnumerable<PropertyInfoDto> Search(int minPrice, int maxPrice, int minSize, int maxSize)
         {
             var properties = dbContext.Properties.Where(x => x.Price >= minPrice && x.Price <= maxPrice && x.Size >= minSize && x.Size <= maxSize)
                 
-                .Distinct()
-                .Select(x => new PropertyInfoDto
-                {
-                    DistinctName = x.District.Name,
-                    Size = x.Size,
-                    Price = x.Price ?? 0,
-                    PropertyType = x.Type.Name,
-                    BuildingType = x.BuildingType.Name,
-       
-                })
-                .Distinct()
+                .ProjectTo<PropertyInfoDto>(this.Mapper.ConfigurationProvider)
                 .ToList();
             return properties;
         }

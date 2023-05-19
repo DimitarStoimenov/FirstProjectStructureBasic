@@ -11,5 +11,6 @@
     <ProjectReference Include="..\RealEstates.Data\RealEstates.Data.csproj" />
     <ProjectReference Include="..\RealEstates.Services\RealEstates.Services.csproj" />
   </ItemGroup>
+	
 
 </Project>
